@@ -7,7 +7,7 @@ def call(BuildHandler bHandler) {
     def BUILD_NO=env.BUILD_NUMBER
     final OPEN_SHIFT_URL="https://c100-e.eu-gb.containers.cloud.ibm.com:31724"
     final DOCKER_REGISTRY_URL="docker-registry.cp4i-b2e73aa4eddf9dc566faa4f42ccdd306-0001.us-east.containers.appdomain.cloud"
-    final ACE_INSTALL_DIR="/opt/ibm/ace-11.0.0.9"
+    final ACE_INSTALL_DIR="/opt/IBM/ace-11.0.0.9"
     final BUILD_FOLDER="/home/ucp4i/play/one-click-builds"
     final RELEASE_NAME_PREFIX="one-click"
     final RELEASE_NAME="${RELEASE_NAME_PREFIX}-${APP_NAME}-rel-${BUILD_NO}".toLowerCase().replaceAll('_', '-')
