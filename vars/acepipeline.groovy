@@ -10,11 +10,9 @@ def step_build(){
             sh ''' echo "BUILD_FOLDER *********" + ${BUILD_FOLDER}
                   . ${ACE_INSTALL_DIR}/server/bin/mqsiprofile
                   pwd
-                  dir
                   mqsicreatebar -data . -b ${APP_NAME}.bar -a ${APP_NAME} -skipWSErrorCheck
                   cp ${APP_NAME}.bar ${BUILD_FOLDER}'''
               
-            stash includes: '*.bar', name: 'barFileComponent'
           }
       }
       catch(error) {
