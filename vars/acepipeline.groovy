@@ -10,6 +10,7 @@ def step_build(){
             sh ''' echo "BUILD_FOLDER *********" + ${BUILD_FOLDER}
                   . ${ACE_INSTALL_DIR}/server/bin/mqsiprofile
                   pwd
+                  echo "App name"+${APP_NAME}
                   mqsicreatebar -data . -b ${APP_NAME}.bar -a ${APP_NAME} -skipWSErrorCheck
                   cp ${APP_NAME}.bar ${BUILD_FOLDER}'''
               
