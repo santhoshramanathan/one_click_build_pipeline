@@ -7,13 +7,13 @@ def call(BuildHandler bHandler) {
     def BUILD_NO=env.BUILD_NUMBER
     final OPEN_SHIFT_URL="https://c100-e.eu-gb.containers.cloud.ibm.com:31724"
     final DOCKER_REGISTRY_URL="docker-registry.cp4i-b2e73aa4eddf9dc566faa4f42ccdd306-0001.us-east.containers.appdomain.cloud"
-    final ACE_INSTALL_DIR="/opt/IBM/ace-11.0.0.10"
+    final ACE_INSTALL_DIR="/opt/ibm/ace-11.0.0.9"
     final BUILD_FOLDER="/home/ucp4i/play/one-click-builds"
-    final RELEASE_NAME_PREFIX="one-click"
-    final RELEASE_NAME="${RELEASE_NAME_PREFIX}-${APP_NAME}-rel-${BUILD_NO}".toLowerCase().replaceAll('_', '-')
+    final RELEASE_NAME_PREFIX="oneclk"
+    final RELEASE_NAME="${RELEASE_NAME_PREFIX}-${APP_NAME}-${BUILD_NO}".toLowerCase().replaceAll('_', '-')
 
     def BUILD_NO_TO_DEL=BUILD_NO - 2;
-    final RELEASE_NAME_TO_DEL="${RELEASE_NAME_PREFIX}-${APP_NAME}-rel-${BUILD_NO_TO_DEL}".toLowerCase().replaceAll('_', '-')
+    final RELEASE_NAME_TO_DEL="${RELEASE_NAME_PREFIX}-${APP_NAME}-${BUILD_NO_TO_DEL}".toLowerCase().replaceAll('_', '-')
 
     aceworkflow = bHandler.getAcePipeline()
     
@@ -33,7 +33,91 @@ def call(BuildHandler bHandler) {
         stage('Checkout & Build') {
             
                 try {
-                    aceworkflow.step_build()
+                    aceworkflow.step_barbuild()
+                }
+                catch (error) {
+                    throw error
+                }
+                finally {
+                    step([$class: 'WsCleanup', notFailBuild: true, deleteDirs: true])
+                }
+            
+        }
+		
+		stage('Openshift Login & Image tag') {
+            
+                try {
+                    aceworkflow.step_oc_login_imagecreate()
+                }
+                catch (error) {
+                    throw error
+                }
+                finally {
+                    step([$class: 'WsCleanup', notFailBuild: true, deleteDirs: true])
+                }
+            
+        }
+		
+		stage('Create Build Config') {
+            
+                try {
+                    aceworkflow.step_create_buildConfig()
+                }
+                catch (error) {
+                    throw error
+                }
+                finally {
+                    step([$class: 'WsCleanup', notFailBuild: true, deleteDirs: true])
+                }
+            
+        }
+		
+		stage('Start Build') {
+            
+                try {
+                    aceworkflow.step_startbuild()
+                }
+                catch (error) {
+                    throw error
+                }
+                finally {
+                    step([$class: 'WsCleanup', notFailBuild: true, deleteDirs: true])
+                }
+            
+        }
+		
+	/*	stage('Twistlock image scan') {
+            
+                try {
+                    aceworkflow.twistlock_scan()
+                }
+                catch (error) {
+                    throw error
+                }
+                finally {
+                    step([$class: 'WsCleanup', notFailBuild: true, deleteDirs: true])
+                }
+            
+        }
+		
+		stage('Twistlock image scan publish') {
+            
+                try {
+                    aceworkflow.twistlock_publish()
+                }
+                catch (error) {
+                    throw error
+                }
+                finally {
+                    step([$class: 'WsCleanup', notFailBuild: true, deleteDirs: true])
+                }
+            
+        } */
+		
+		stage('Deploy Integration Server') {
+            
+                try {
+                    aceworkflow.step_deploy()
                 }
                 catch (error) {
                     throw error
@@ -44,7 +128,7 @@ def call(BuildHandler bHandler) {
             
         }
 
-      stage('Run Transformation Advisor') {
+ /*     stage('Run Transformation Advisor') {
             
                 try {
                     aceworkflow.step_run_ta()
@@ -60,7 +144,7 @@ def call(BuildHandler bHandler) {
 
 
 
-/*          stage("Create Docker Image") {
+          stage("Create Docker Image") {
         
             try {
                 aceworkflow.step_createDockerImage()
